@@ -228,6 +228,7 @@ public class SteamLobbyManager : MonoBehaviour
         CurrentLobby.SetData("GameState", "Started");
 
         // Load game scene
+        SceneManager.LoadScene(1);
     }
 
     // Executed when we receive a chat message
