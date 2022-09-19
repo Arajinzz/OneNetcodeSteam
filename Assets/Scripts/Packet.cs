@@ -8,6 +8,7 @@ public class Packet
 
     public enum PacketType : ushort
     {
+        SyncTick,
         IntantiatePlayer,
         InstantiatePlayerAtPosition,
         KeyEvent,

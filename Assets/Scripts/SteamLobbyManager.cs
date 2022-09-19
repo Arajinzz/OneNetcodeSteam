@@ -17,9 +17,6 @@ public class SteamLobbyManager : MonoBehaviour
     // Here resides the lobby search result
     public List<Lobby> LobbiesResult;
 
-    // The player who is hosting the game
-    public SteamId HostPlayerId;
-
     private void Awake()
     {
 
@@ -28,7 +25,6 @@ public class SteamLobbyManager : MonoBehaviour
             DontDestroyOnLoad(this);
             Instance = this;
             LobbiesResult = new List<Lobby>();
-            HostPlayerId = 0;
         } else if (Instance != this)
         {
             Destroy(gameObject);
@@ -70,6 +66,19 @@ public class SteamLobbyManager : MonoBehaviour
         SteamMatchmaking.OnChatMessage -= OnChatMessageCallback;
         SteamNetworking.OnP2PSessionRequest -= OnP2PSessionRequestCallback;
         SceneManager.sceneLoaded -= OnSceneLoadedCallback;
+    }
+
+    public void SendToTarget(SteamId target, byte[] data)
+    {
+        bool sent = SteamNetworking.SendP2PPacket(target, data);
+    }
+
+    public void SendToAllLobby(byte[] data)
+    {
+        foreach (Friend member in CurrentLobby.Members)
+        {
+            SendToTarget(member.Id, data);
+        }
     }
 
     #endregion
@@ -223,9 +232,9 @@ public class SteamLobbyManager : MonoBehaviour
     private void OnLobbyGameCreatedCallback(Lobby lobby, uint ip, ushort port, SteamId gameServerId)
     {
         Debug.Log("Game is Started by: " + gameServerId.ToString());
-        HostPlayerId = gameServerId;
 
         CurrentLobby.SetData("GameState", "Started");
+        CurrentLobby.SetData("ServerTick", "0");
 
         // Load game scene
         SceneManager.LoadScene(1);
