@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Steamworks;
+using Steamworks.Data;
 
 public class Client : MonoBehaviour
 {
@@ -9,6 +12,8 @@ public class Client : MonoBehaviour
     private float minTimeBetweenTicks;
     private const float CLIENT_TICK_RATE = 60f;
 
+    private Queue<P2Packet?> receivedPackets;
+
     private Steamworks.Friend owner;
 
     void Start()
@@ -16,6 +21,8 @@ public class Client : MonoBehaviour
         clientTimer = 0.0f;
         clientTick = 0;
         minTimeBetweenTicks = 1 / CLIENT_TICK_RATE;
+
+        receivedPackets = new Queue<P2Packet?>();
 
         if (SteamLobbyManager.Instance)
         {
@@ -26,12 +33,15 @@ public class Client : MonoBehaviour
 
     void Update()
     {
-        if (!SteamLobbyManager.Instance && SteamLobbyManager.Instance.CurrentLobby.Owner.Id != owner.Id)
+        if (SteamLobbyManager.Instance && SteamLobbyManager.Instance.CurrentLobby.Owner.Id != owner.Id)
         {
             // Means owner changed, server changed
             owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
             clientTick = Convert.ToUInt32(SteamLobbyManager.Instance.CurrentLobby.GetData("ServerTick"));
         }
+
+        // Receive packets ASAP
+        ReceivePackets();
 
         clientTimer += Time.deltaTime;
 
@@ -44,4 +54,22 @@ public class Client : MonoBehaviour
             clientTick++;
         }
     }
+
+
+    private void ReceivePackets()
+    {
+        if (!SteamManager.Instance)
+            return;
+
+        while (SteamNetworking.IsP2PPacketAvailable())
+        {
+            var packet = SteamNetworking.ReadP2PPacket();
+            if (packet.HasValue)
+            {
+                receivedPackets.Enqueue(packet);
+            }
+        }
+    }
+
+
 }

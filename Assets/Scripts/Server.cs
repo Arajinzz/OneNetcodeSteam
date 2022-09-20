@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Steamworks;
+using Steamworks.Data;
 
 public class Server : MonoBehaviour
 {
@@ -9,6 +12,8 @@ public class Server : MonoBehaviour
     private float minTimeBetweenTicks;
     private const float SERVER_TICK_RATE = 60f;
 
+    private Queue<P2Packet?> receivedPackets;
+
     private Steamworks.Friend owner;
 
     void Start()
@@ -16,6 +21,8 @@ public class Server : MonoBehaviour
         serverTimer = 0.0f;
         serverTick = 0;
         minTimeBetweenTicks = 1 / SERVER_TICK_RATE;
+        
+        receivedPackets = new Queue<P2Packet?>();
 
         if (SteamLobbyManager.Instance)
         {
@@ -26,17 +33,20 @@ public class Server : MonoBehaviour
 
     void Update()
     {   
-        if (!SteamLobbyManager.Instance && SteamLobbyManager.Instance.CurrentLobby.Owner.Id != owner.Id)
+        if (SteamLobbyManager.Instance && SteamLobbyManager.Instance.CurrentLobby.Owner.Id != owner.Id)
         {
             // Means owner changed, server changed
             owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
             serverTick = Convert.ToUInt32(SteamLobbyManager.Instance.CurrentLobby.GetData("ServerTick"));
         }
         
-        if (!SteamLobbyManager.Instance && !owner.IsMe)
+        if (SteamLobbyManager.Instance && !owner.IsMe)
         {
             return;
         }
+
+        // Receive packets ASAP
+        ReceivePackets();
 
         serverTimer += Time.deltaTime;
 
@@ -45,9 +55,28 @@ public class Server : MonoBehaviour
             serverTimer -= minTimeBetweenTicks;
 
             // Handle tick here
-            SteamLobbyManager.Instance.CurrentLobby.SetData("ServerTick", serverTick.ToString());
+            if (SteamManager.Instance)
+                SteamLobbyManager.Instance.CurrentLobby.SetData("ServerTick", serverTick.ToString());
 
             serverTick++;
         }
     }
+
+
+    private void ReceivePackets()
+    {
+        if (!SteamManager.Instance)
+            return;
+
+        while (SteamNetworking.IsP2PPacketAvailable())
+        {
+            var packet = SteamNetworking.ReadP2PPacket();
+            if (packet.HasValue)
+            {
+                receivedPackets.Enqueue(packet);
+            }
+        }
+    }
+
+
 }
