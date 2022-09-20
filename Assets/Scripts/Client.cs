@@ -50,9 +50,18 @@ public class Client : MonoBehaviour
             clientTimer -= minTimeBetweenTicks;
 
             // Handle tick here
+            HandleTick();
 
             clientTick++;
         }
+    }
+
+
+    private void HandleTick()
+    {
+
+
+
     }
 
 

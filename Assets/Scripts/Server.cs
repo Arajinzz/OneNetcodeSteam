@@ -58,8 +58,18 @@ public class Server : MonoBehaviour
             if (SteamManager.Instance)
                 SteamLobbyManager.Instance.CurrentLobby.SetData("ServerTick", serverTick.ToString());
 
+            HandleTick();
+
             serverTick++;
         }
+    }
+
+
+    private void HandleTick()
+    {
+
+
+
     }
 
 
