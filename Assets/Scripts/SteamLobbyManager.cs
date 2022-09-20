@@ -68,9 +68,14 @@ public class SteamLobbyManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoadedCallback;
     }
 
-    public void SendToTarget(SteamId target, byte[] data)
+    private void SendToTarget(SteamId target, byte[] data)
     {
-        bool sent = SteamNetworking.SendP2PPacket(target, data);
+        SteamNetworking.SendP2PPacket(target, data);
+    }
+
+    public void SendToServer(byte[] data)
+    {
+        SteamNetworking.SendP2PPacket(CurrentLobby.Owner.Id, data);
     }
 
     public void SendToAllLobby(byte[] data)

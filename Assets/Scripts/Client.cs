@@ -43,8 +43,9 @@ public class Client : MonoBehaviour
             clientTick = Convert.ToUInt32(SteamLobbyManager.Instance.CurrentLobby.GetData("ServerTick"));
         }
 
-        // Receive packets ASAP
-        ReceivePackets();
+        // Receive packets ASAP, client receives packets only if he is not a server
+        if (SteamLobbyManager.Instance && !owner.IsMe)
+            ReceivePackets();
 
         clientTimer += Time.deltaTime;
 
