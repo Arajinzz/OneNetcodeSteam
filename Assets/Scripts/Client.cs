@@ -30,6 +30,9 @@ public class Client : MonoBehaviour
         if (SteamLobbyManager.Instance)
         {
             owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
+            // Instantiate player on server
+            var packet = new Packet(Packet.PacketType.InstantiatePlayer);
+            SteamLobbyManager.Instance.SendToServer(packet.buffer.ToArray());
         }
     }
 

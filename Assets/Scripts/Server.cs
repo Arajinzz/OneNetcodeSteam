@@ -69,6 +69,19 @@ public class Server : MonoBehaviour
     {
 
 
+        // handle received packets
+        while(receivedPackets.Count > 0)
+        {
+            var recPacket = receivedPackets.Dequeue();
+            var packet = new Packet(recPacket.Value.Data);
+
+            if (packet.GetPacketType() == Packet.PacketType.InstantiatePlayer)
+            {
+                Debug.Log("Instantiating player ...");
+            }
+            
+        }
+
 
     }
 

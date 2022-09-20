@@ -631,7 +631,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 970830443}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.62, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0.62, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -897,8 +897,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1240178650}
-  - component: {fileID: 1240178649}
   - component: {fileID: 1240178648}
+  - component: {fileID: 1240178649}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
