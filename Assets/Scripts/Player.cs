@@ -55,6 +55,10 @@ public class Player : MonoBehaviour
         {
             Velocity.y = -2f;
         }
+
+        // Falling
+        Velocity.y += Gravity * Time.fixedDeltaTime;
+        Controller.Move(Velocity * Time.fixedDeltaTime);
     }
 
 
@@ -66,12 +70,13 @@ public class Player : MonoBehaviour
             Cursor.visible = true;
             SteamLobbyManager.Instance.LeaveLobby();
         }
+    }
 
-        HandleMouvement();
-        Jump();
 
-        float mouseX = Input.GetAxisRaw("Mouse X") * mouseSens * Time.deltaTime;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSens * Time.deltaTime;
+    public void UpdateCamera(float deltaTime)
+    {
+        float mouseX = Input.GetAxisRaw("Mouse X") * mouseSens * deltaTime;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSens * deltaTime;
 
         // Camera rotation
         xRotation -= mouseY;
@@ -82,46 +87,42 @@ public class Player : MonoBehaviour
         // Update camera
         Camera.main.transform.position = playerCameraPosition.transform.position;
         Camera.main.transform.rotation = playerCameraPosition.transform.rotation;
-
-        // Falling
-        Velocity.y += Gravity * Time.deltaTime;
-        Controller.Move(Velocity * Time.deltaTime);
     }
 
-    private void Jump()
+    public void ProcessJump(Structs.Inputs input)
     {
-        if (Input.GetKey(KeyCode.Space) && bGrounded)
+        if (input.jump && bGrounded)
         {
             Velocity.y = Mathf.Sqrt(JumpHeight * -2f * Gravity);
         }
     }
 
-    public void HandleMouvement()
+    public void ProcessMouvement(Structs.Inputs input, float deltaTime)
     {
         float x = 0;
         float z = 0;
 
-        if (Input.GetKey(KeyCode.W))
+        if (input.up)
         {
             z += 1;
         }
 
-        if (Input.GetKey(KeyCode.S))
+        if (input.down)
         {
             z += -1;
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (input.left)
         {
             x += -1;
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (input.right)
         {
             x += 1;
         }
 
         Vector3 move = transform.right * x + transform.forward * z;
-        Controller.Move(move * Speed * Time.deltaTime);
+        Controller.Move(move * Speed * deltaTime);
     }
 }

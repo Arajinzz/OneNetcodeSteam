@@ -10,7 +10,7 @@ public class Server : MonoBehaviour
     private float serverTimer;
     public uint serverTick;
     private float minTimeBetweenTicks;
-    private const float SERVER_TICK_RATE = 60f;
+    private const float SERVER_TICK_RATE = 120f;
 
     private Queue<P2Packet?> receivedPackets;
 

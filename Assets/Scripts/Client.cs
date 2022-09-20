@@ -6,11 +6,14 @@ using Steamworks.Data;
 
 public class Client : MonoBehaviour
 {
+    [SerializeField]
+    Player localPlayer;
+
     // to run at fixed tick rate
     private float clientTimer;
     public uint clientTick;
     private float minTimeBetweenTicks;
-    private const float CLIENT_TICK_RATE = 60f;
+    private const float CLIENT_TICK_RATE = 120f;
 
     private Queue<P2Packet?> receivedPackets;
 
@@ -60,7 +63,17 @@ public class Client : MonoBehaviour
     private void HandleTick()
     {
 
+        // Get input
+        Structs.Inputs inputs;
+        inputs.up = Input.GetKey(KeyCode.W);
+        inputs.down = Input.GetKey(KeyCode.S);
+        inputs.left = Input.GetKey(KeyCode.A);
+        inputs.right = Input.GetKey(KeyCode.D);
+        inputs.jump = Input.GetKey(KeyCode.Space);
 
+        localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
+        localPlayer.ProcessJump(inputs);
+        localPlayer.UpdateCamera(minTimeBetweenTicks);
 
     }
 
