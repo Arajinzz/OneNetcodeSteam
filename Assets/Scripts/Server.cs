@@ -14,7 +14,8 @@ public class Server : MonoBehaviour
 
     private Queue<P2Packet?> receivedPackets;
 
-    private Steamworks.Friend owner;
+    private Lobby currentLobby;
+    private Friend owner;
 
     void Start()
     {
@@ -26,7 +27,8 @@ public class Server : MonoBehaviour
 
         if (SteamLobbyManager.Instance)
         {
-            owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
+            currentLobby = SteamLobbyManager.Instance.CurrentLobby;
+            owner = currentLobby.Owner;
         }
     }
 
@@ -36,8 +38,8 @@ public class Server : MonoBehaviour
         if (SteamLobbyManager.Instance && SteamLobbyManager.Instance.CurrentLobby.Owner.Id != owner.Id)
         {
             // Means owner changed, server changed
-            owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
-            serverTick = Convert.ToUInt32(SteamLobbyManager.Instance.CurrentLobby.GetData("ServerTick"));
+            owner = currentLobby.Owner;
+            serverTick = Convert.ToUInt32(currentLobby.GetData("ServerTick"));
         }
         
         if (SteamLobbyManager.Instance && !owner.IsMe)
@@ -56,7 +58,7 @@ public class Server : MonoBehaviour
 
             // Handle tick here
             if (SteamManager.Instance)
-                SteamLobbyManager.Instance.CurrentLobby.SetData("ServerTick", serverTick.ToString());
+                currentLobby.SetData("ServerTick", serverTick.ToString());
 
             HandleTick();
 
@@ -68,16 +70,17 @@ public class Server : MonoBehaviour
     private void HandleTick()
     {
 
-
         // handle received packets
         while(receivedPackets.Count > 0)
         {
             var recPacket = receivedPackets.Dequeue();
+
             var packet = new Packet(recPacket.Value.Data);
 
             if (packet.GetPacketType() == Packet.PacketType.InstantiatePlayer)
             {
-                Debug.Log("Instantiating player ...");
+                // if me just send to all other members
+                SendToAllLobby(recPacket.Value);
             }
             
         }
@@ -98,6 +101,27 @@ public class Server : MonoBehaviour
             {
                 receivedPackets.Enqueue(packet);
             }
+        }
+    }
+
+
+    private void SendToTarget(SteamId target, byte[] data)
+    {
+        SteamNetworking.SendP2PPacket(target, data);
+    }
+
+    public void SendToAllLobby(P2Packet packet)
+    {
+        foreach (Friend member in currentLobby.Members)
+        {
+            // This is me
+            if (member.Id == owner.Id)
+            {
+                // Redirect packet to my client script
+                gameObject.GetComponent<Client>().PacketManualEnqeue(packet);
+                continue;
+            }
+            SendToTarget(member.Id, packet.Data);
         }
     }
 

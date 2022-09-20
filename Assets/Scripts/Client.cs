@@ -7,7 +7,7 @@ using Steamworks.Data;
 public class Client : MonoBehaviour
 {
     [SerializeField]
-    Player localPlayer;
+    GameObject playerPrefab;
 
     // to run at fixed tick rate
     private float clientTimer;
@@ -17,7 +17,9 @@ public class Client : MonoBehaviour
 
     private Queue<P2Packet?> receivedPackets;
 
-    private Steamworks.Friend owner;
+    private Lobby currentLobby;
+    private Friend owner;
+    private Player localPlayer;
 
     void Start()
     {
@@ -29,21 +31,22 @@ public class Client : MonoBehaviour
 
         if (SteamLobbyManager.Instance)
         {
-            owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
+            currentLobby = SteamLobbyManager.Instance.CurrentLobby;
+            owner = currentLobby.Owner;
             // Instantiate player on server
             var packet = new Packet(Packet.PacketType.InstantiatePlayer);
-            SteamLobbyManager.Instance.SendToServer(packet.buffer.ToArray());
+            SendToServer(packet.buffer.ToArray());
         }
     }
 
 
     void Update()
     {
-        if (SteamLobbyManager.Instance && SteamLobbyManager.Instance.CurrentLobby.Owner.Id != owner.Id)
+        if (SteamLobbyManager.Instance && currentLobby.Owner.Id != owner.Id)
         {
             // Means owner changed, server changed
-            owner = SteamLobbyManager.Instance.CurrentLobby.Owner;
-            clientTick = Convert.ToUInt32(SteamLobbyManager.Instance.CurrentLobby.GetData("ServerTick"));
+            owner = currentLobby.Owner;
+            clientTick = Convert.ToUInt32(currentLobby.GetData("ServerTick"));
         }
 
         // Receive packets ASAP, client receives packets only if he is not a server
@@ -75,11 +78,35 @@ public class Client : MonoBehaviour
         inputs.right = Input.GetKey(KeyCode.D);
         inputs.jump = Input.GetKey(KeyCode.Space);
 
-        localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
-        localPlayer.ProcessJump(inputs);
-        localPlayer.UpdateCamera(minTimeBetweenTicks);
-    }
+        if (localPlayer)
+        {
+            localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
+            localPlayer.ProcessJump(inputs);
+            localPlayer.UpdateCamera(minTimeBetweenTicks);
+        }
 
+        // Handle received packets
+        while (receivedPackets.Count > 0)
+        {
+            var recPacket = receivedPackets.Dequeue();
+
+            var packet = new Packet(recPacket.Value.Data);
+
+            if (packet.GetPacketType() == Packet.PacketType.InstantiatePlayer)
+            {
+                Debug.Log("Will instantiate a player ...");
+                GameObject playerObj = Instantiate(playerPrefab, GameObject.Find("SpawnPoint").transform.position, Quaternion.identity);
+
+                // if me set local player to instantiated player
+                if (recPacket.Value.SteamId == SteamManager.Instance.PlayerSteamId)
+                {
+                    localPlayer = playerObj.GetComponent<Player>();
+                }
+            }
+        
+        }
+    
+    }
 
     private void ReceivePackets()
     {
@@ -96,5 +123,16 @@ public class Client : MonoBehaviour
         }
     }
 
+
+    public void PacketManualEnqeue(P2Packet packet)
+    {
+        receivedPackets.Enqueue(packet);
+    }
+
+
+    private void SendToServer(byte[] data)
+    {
+        SteamNetworking.SendP2PPacket(currentLobby.Owner.Id, data);
+    }
 
 }
