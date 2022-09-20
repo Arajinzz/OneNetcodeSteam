@@ -74,7 +74,6 @@ public class Client : MonoBehaviour
         localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
         localPlayer.ProcessJump(inputs);
         localPlayer.UpdateCamera(minTimeBetweenTicks);
-
     }
 
 
