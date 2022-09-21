@@ -33,6 +33,8 @@ public class Client : MonoBehaviour
         {
             currentLobby = SteamLobbyManager.Instance.CurrentLobby;
             owner = currentLobby.Owner;
+            // get server tick
+            clientTick = Convert.ToUInt32(currentLobby.GetData("ServerTick"));
             // Instantiate player on server
             var packet = new Packet(Packet.PacketType.InstantiatePlayer);
             SendToServer(packet.buffer.ToArray());
@@ -98,7 +100,7 @@ public class Client : MonoBehaviour
                 GameObject playerObj = Instantiate(playerPrefab, GameObject.Find("SpawnPoint").transform.position, Quaternion.identity);
 
                 // if me set local player to instantiated player
-                if (recPacket.Value.SteamId == SteamManager.Instance.PlayerSteamId)
+                if (packet.PopUInt64() == SteamManager.Instance.PlayerSteamId)
                 {
                     localPlayer = playerObj.GetComponent<Player>();
                 }

@@ -71,6 +71,18 @@ public class Packet
         return data;
     }
 
+    public void InsertUInt64(UInt64 data)
+    {
+        buffer.AddRange(BitConverter.GetBytes(data));
+    }
+
+    public UInt64 PopUInt64()
+    {
+        UInt64 data = BitConverter.ToUInt64(buffer.GetRange(offset, sizeof(UInt64)).ToArray());
+        offset += sizeof(UInt64);
+        return data;
+    }
+
     public void InsertFloat(float data)
     {
         buffer.AddRange(BitConverter.GetBytes(data));

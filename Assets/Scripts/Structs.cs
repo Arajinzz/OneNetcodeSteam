@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Steamworks;
 
 public class Structs
 {
@@ -32,4 +33,10 @@ public class Structs
         public Vector3 position; // 12 bytes
         public Quaternion rotation; // 16 bytes
     }
+
+    public struct InstantiatePlayerMessage
+    {
+        public SteamId playerId;
+    }
+
 }

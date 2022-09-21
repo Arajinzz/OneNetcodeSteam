@@ -205,6 +205,7 @@ public class SteamLobbyManager : MonoBehaviour
         if(CurrentLobby.GetData("GameState").Equals("Started"))
         {
             // Means game started
+            SceneManager.LoadScene(1);
         }
 
         // TODO: load game scene

@@ -79,8 +79,13 @@ public class Server : MonoBehaviour
 
             if (packet.GetPacketType() == Packet.PacketType.InstantiatePlayer)
             {
+                packet.InsertUInt64(recPacket.Value.SteamId);
+                
+                P2Packet packetToSend;
+                packetToSend.SteamId = recPacket.Value.SteamId;
+                packetToSend.Data = packet.buffer.ToArray();
                 // if me just send to all other members
-                SendToAllLobby(recPacket.Value);
+                SendToAllLobby(packetToSend);
             }
             
         }
