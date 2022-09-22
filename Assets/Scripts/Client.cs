@@ -85,9 +85,23 @@ public class Client : MonoBehaviour
 
         if (localPlayer)
         {
-            localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
-            localPlayer.ProcessJump(inputs);
+            // if i Am a server let server process
+            // to avoid multiple mouvement process
+            // this probably should be reworked
+            if (owner.Id != SteamManager.Instance.PlayerSteamId)
+            {
+                localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
+                localPlayer.ProcessJump(inputs);
+            }
             localPlayer.UpdateCamera(minTimeBetweenTicks);
+
+            Structs.InputMessage inputMsg;
+            inputMsg.tick_number = clientTick;
+            inputMsg.inputs = inputs;
+
+            var inputPacket = new Packet(Packet.PacketType.InputMessage);
+            inputPacket.InsertInputMessage(inputMsg);
+            SendToServer(inputPacket.buffer.ToArray());
         }
 
         // Handle received packets
@@ -107,10 +121,8 @@ public class Client : MonoBehaviour
                 if (playerId == SteamManager.Instance.PlayerSteamId)
                 {
                     localPlayer = playerObj.GetComponent<Player>();
-                } else
-                {
-                    gameManager.AddPlayerToList(playerId, playerObj);
                 }
+                gameManager.AddPlayerToList(playerId, playerObj);
             }
         
         }

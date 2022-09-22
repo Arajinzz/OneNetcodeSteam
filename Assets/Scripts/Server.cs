@@ -99,6 +99,12 @@ public class Server : MonoBehaviour
                     packet.InsertUInt64(id);
                     SendToTarget(recPacket.Value.SteamId, packet.buffer.ToArray());
                 }
+            } else if (packet.GetPacketType() == Packet.PacketType.InputMessage)
+            {
+                Structs.InputMessage inputMsg = packet.PopInputMessage();
+                GameObject whatPlayer = gameManager.playerList[recPacket.Value.SteamId];
+                whatPlayer.GetComponent<Player>().ProcessMouvement(inputMsg.inputs, minTimeBetweenTicks);
+                whatPlayer.GetComponent<Player>().ProcessJump(inputMsg.inputs);
             }
             
         }
