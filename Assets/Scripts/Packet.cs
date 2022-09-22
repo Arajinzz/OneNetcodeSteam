@@ -144,7 +144,7 @@ public class Packet
 
         InsertFloat(stateMsg.position.x);
         InsertFloat(stateMsg.position.y);
-        InsertFloat(stateMsg.position.y);
+        InsertFloat(stateMsg.position.z);
 
         InsertFloat(stateMsg.rotation.x);
         InsertFloat(stateMsg.rotation.y);

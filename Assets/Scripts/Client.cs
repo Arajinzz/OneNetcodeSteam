@@ -116,6 +116,7 @@ public class Client : MonoBehaviour
                 Debug.Log("Will instantiate a player ...");
                 GameObject playerObj = Instantiate(playerPrefab, GameObject.Find("SpawnPoint").transform.position, Quaternion.identity);
                 SteamId playerId = packet.PopUInt64();
+                Debug.Log("Received ID : " + playerId);
 
                 // if me set local player to instantiated player
                 if (playerId == SteamManager.Instance.PlayerSteamId)
@@ -127,13 +128,10 @@ public class Client : MonoBehaviour
             {
                 SteamId playerId = packet.PopUInt64();
                 Structs.StateMessage stateMsg = packet.PopStateMessage();
-                foreach (SteamId id in gameManager.playerList.Keys)
+                if (gameManager.playerList.ContainsKey(playerId))
                 {
-                    if (playerId == id)
-                    {
-                        gameManager.playerList[id].GetComponent<Player>().transform.position = stateMsg.position;
-                        gameManager.playerList[id].GetComponent<Player>().transform.rotation = stateMsg.rotation;
-                    }
+                    gameManager.playerList[playerId].transform.position = stateMsg.position;
+                    gameManager.playerList[playerId].transform.rotation = stateMsg.rotation;
                 }
             }
         

@@ -78,7 +78,6 @@ public class Server : MonoBehaviour
         while(receivedPackets.Count > 0)
         {
             var recPacket = receivedPackets.Dequeue();
-
             var packet = new Packet(recPacket.Value.Data);
 
             if (packet.GetPacketType() == Packet.PacketType.InstantiatePlayer)
@@ -95,9 +94,13 @@ public class Server : MonoBehaviour
                 // Send all players to target
                 foreach (SteamId id in gameManager.playerList.Keys)
                 {
-                    packet.PopUInt64();
-                    packet.InsertUInt64(id);
-                    SendToTarget(recPacket.Value.SteamId, packet.buffer.ToArray());
+                    if (id != recPacket.Value.SteamId)
+                    {
+                        Debug.Log("Sending to " + recPacket.Value.SteamId + " ID : " + id);
+                        var newPack = new Packet(Packet.PacketType.InstantiatePlayer);
+                        newPack.InsertUInt64(id);
+                        SendToTarget(recPacket.Value.SteamId, newPack.buffer.ToArray());
+                    }
                 }
             }
             else if (packet.GetPacketType() == Packet.PacketType.InputMessage)

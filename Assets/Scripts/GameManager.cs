@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
     {
         if (!playerList.ContainsKey(id))
             playerList.Add(id, player);
+
+        Debug.Log("Adding player with id: " + id);
     }
 
     public void RemovePlayerFromList(SteamId id)
