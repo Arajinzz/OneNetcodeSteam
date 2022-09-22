@@ -6,6 +6,10 @@ using Steamworks.Data;
 
 public class Server : MonoBehaviour
 {
+
+    [SerializeField]
+    GameManager gameManager;
+
     // to run at fixed tick rate
     private float serverTimer;
     public uint serverTick;
@@ -84,8 +88,17 @@ public class Server : MonoBehaviour
                 P2Packet packetToSend;
                 packetToSend.SteamId = recPacket.Value.SteamId;
                 packetToSend.Data = packet.buffer.ToArray();
-                // if me just send to all other members
+                
+                // Send to all players
                 SendToAllLobby(packetToSend);
+
+                // Send all players to target
+                foreach (SteamId id in gameManager.playerList.Keys)
+                {
+                    packet.PopUInt64();
+                    packet.InsertUInt64(id);
+                    SendToTarget(recPacket.Value.SteamId, packet.buffer.ToArray());
+                }
             }
             
         }

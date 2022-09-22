@@ -865,6 +865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fed51979481cc6346829063ff82deb9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 847952062}
   serverTick: 0
 --- !u!114 &1240178649
 MonoBehaviour:
@@ -880,6 +881,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 2314432152656364761, guid: 3714bbf24bf33f74ab9e092097b1c2d9,
     type: 3}
+  gameManager: {fileID: 847952062}
   clientTick: 0
 --- !u!4 &1240178650
 Transform:

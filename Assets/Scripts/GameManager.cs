@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Steamworks;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +19,13 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject netManager;
 
+    public Dictionary<SteamId, GameObject> playerList;
+
+    private void Start()
+    {
+        playerList = new Dictionary<SteamId, GameObject>();
+    }
+
     void Update()
     {
         if (SteamLobbyManager.Instance)
@@ -31,4 +39,17 @@ public class GameManager : MonoBehaviour
         if (netManager.GetComponent<Client>())
             cTickText.SetText(netManager.GetComponent<Client>().clientTick.ToString());
     }
+
+    public void AddPlayerToList(SteamId id, GameObject player)
+    {
+        if (!playerList.ContainsKey(id))
+            playerList.Add(id, player);
+    }
+
+    public void RemovePlayerFromList(SteamId id)
+    {
+        if (playerList.ContainsKey(id))
+            playerList.Remove(id);
+    }
+
 }

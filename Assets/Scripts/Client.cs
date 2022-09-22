@@ -9,6 +9,9 @@ public class Client : MonoBehaviour
     [SerializeField]
     GameObject playerPrefab;
 
+    [SerializeField]
+    GameManager gameManager;
+
     // to run at fixed tick rate
     private float clientTimer;
     public uint clientTick;
@@ -98,11 +101,15 @@ public class Client : MonoBehaviour
             {
                 Debug.Log("Will instantiate a player ...");
                 GameObject playerObj = Instantiate(playerPrefab, GameObject.Find("SpawnPoint").transform.position, Quaternion.identity);
+                SteamId playerId = packet.PopUInt64();
 
                 // if me set local player to instantiated player
-                if (packet.PopUInt64() == SteamManager.Instance.PlayerSteamId)
+                if (playerId == SteamManager.Instance.PlayerSteamId)
                 {
                     localPlayer = playerObj.GetComponent<Player>();
+                } else
+                {
+                    gameManager.AddPlayerToList(playerId, playerObj);
                 }
             }
         
