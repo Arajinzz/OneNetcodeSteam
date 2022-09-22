@@ -10,6 +10,7 @@ public class Packet
     {
         InstantiatePlayer,
         InputMessage,
+        StateMessage,
     }
 
     public UInt16 packetType;
@@ -134,6 +135,32 @@ public class Packet
         inputMsg.inputs = PopInput();
 
         return inputMsg;
+    }
+
+    public void InsertStateMessage(Structs.StateMessage stateMsg)
+    {
+
+        InsertUInt32(stateMsg.tick_number);
+
+        InsertFloat(stateMsg.position.x);
+        InsertFloat(stateMsg.position.y);
+        InsertFloat(stateMsg.position.y);
+
+        InsertFloat(stateMsg.rotation.x);
+        InsertFloat(stateMsg.rotation.y);
+        InsertFloat(stateMsg.rotation.z);
+        InsertFloat(stateMsg.rotation.w);
+
+    }
+
+    public Structs.StateMessage PopStateMessage()
+    {
+        Structs.StateMessage stateMsg;
+        stateMsg.tick_number = PopUInt32();
+        stateMsg.position = new Vector3(PopFloat(), PopFloat(), PopFloat());
+        stateMsg.rotation = new Quaternion(PopFloat(), PopFloat(), PopFloat(), PopFloat());
+
+        return stateMsg;
     }
 
 }

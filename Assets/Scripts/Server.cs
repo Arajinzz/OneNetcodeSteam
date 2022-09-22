@@ -84,11 +84,11 @@ public class Server : MonoBehaviour
             if (packet.GetPacketType() == Packet.PacketType.InstantiatePlayer)
             {
                 packet.InsertUInt64(recPacket.Value.SteamId);
-                
+
                 P2Packet packetToSend;
                 packetToSend.SteamId = recPacket.Value.SteamId;
                 packetToSend.Data = packet.buffer.ToArray();
-                
+
                 // Send to all players
                 SendToAllLobby(packetToSend);
 
@@ -99,14 +99,30 @@ public class Server : MonoBehaviour
                     packet.InsertUInt64(id);
                     SendToTarget(recPacket.Value.SteamId, packet.buffer.ToArray());
                 }
-            } else if (packet.GetPacketType() == Packet.PacketType.InputMessage)
+            }
+            else if (packet.GetPacketType() == Packet.PacketType.InputMessage)
             {
                 Structs.InputMessage inputMsg = packet.PopInputMessage();
                 GameObject whatPlayer = gameManager.playerList[recPacket.Value.SteamId];
                 whatPlayer.GetComponent<Player>().ProcessMouvement(inputMsg.inputs, minTimeBetweenTicks);
                 whatPlayer.GetComponent<Player>().ProcessJump(inputMsg.inputs);
+
+                Structs.StateMessage stateMsg;
+                stateMsg.tick_number = inputMsg.tick_number + 1;
+                stateMsg.position = whatPlayer.GetComponent<Player>().transform.position;
+                stateMsg.rotation = whatPlayer.GetComponent<Player>().transform.rotation;
+
+                var statePacket = new Packet(Packet.PacketType.StateMessage);
+                statePacket.InsertUInt64(recPacket.Value.SteamId);
+                statePacket.InsertStateMessage(stateMsg);
+
+                P2Packet packetToSend;
+                packetToSend.SteamId = recPacket.Value.SteamId;
+                packetToSend.Data = statePacket.buffer.ToArray();
+
+                SendToAllLobby(packetToSend);
             }
-            
+
         }
 
 

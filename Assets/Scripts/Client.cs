@@ -123,6 +123,18 @@ public class Client : MonoBehaviour
                     localPlayer = playerObj.GetComponent<Player>();
                 }
                 gameManager.AddPlayerToList(playerId, playerObj);
+            } else if (packet.GetPacketType() == Packet.PacketType.StateMessage)
+            {
+                SteamId playerId = packet.PopUInt64();
+                Structs.StateMessage stateMsg = packet.PopStateMessage();
+                foreach (SteamId id in gameManager.playerList.Keys)
+                {
+                    if (playerId == id)
+                    {
+                        gameManager.playerList[id].GetComponent<Player>().transform.position = stateMsg.position;
+                        gameManager.playerList[id].GetComponent<Player>().transform.rotation = stateMsg.rotation;
+                    }
+                }
             }
         
         }
