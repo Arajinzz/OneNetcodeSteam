@@ -64,12 +64,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Escape) && SteamLobbyManager.Instance)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            SteamLobbyManager.Instance.LeaveLobby();
-        }
+        
     }
 
 

@@ -75,6 +75,14 @@ public class Client : MonoBehaviour
     private void HandleTick()
     {
 
+        if (Input.GetKey(KeyCode.Escape) && SteamLobbyManager.Instance)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            SendToServer(new Packet(Packet.PacketType.PlayerLeaving).buffer.ToArray());
+            SteamLobbyManager.Instance.LeaveLobby();
+        }
+
         // Get input
         Structs.Inputs inputs;
         inputs.up = Input.GetKey(KeyCode.W);
@@ -132,6 +140,13 @@ public class Client : MonoBehaviour
                 {
                     gameManager.playerList[playerId].transform.position = stateMsg.position;
                     gameManager.playerList[playerId].transform.rotation = stateMsg.rotation;
+                }
+            } else if (packet.GetPacketType() == Packet.PacketType.PlayerLeaving)
+            {
+                SteamId playerId = packet.PopUInt64();
+                if (gameManager.playerList.ContainsKey(playerId))
+                {
+                    gameManager.RemovePlayerFromList(playerId);
                 }
             }
         
