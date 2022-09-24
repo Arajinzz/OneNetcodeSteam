@@ -90,6 +90,7 @@ public class Client : MonoBehaviour
         inputs.left = Input.GetKey(KeyCode.A);
         inputs.right = Input.GetKey(KeyCode.D);
         inputs.jump = Input.GetKey(KeyCode.Space);
+        inputs.axisX = Input.GetAxisRaw("Mouse X");
 
         if (localPlayer)
         {
@@ -101,7 +102,7 @@ public class Client : MonoBehaviour
                 localPlayer.ProcessMouvement(inputs, minTimeBetweenTicks);
                 localPlayer.ProcessJump(inputs);
             }
-            localPlayer.UpdateCamera(minTimeBetweenTicks);
+            localPlayer.UpdateCamera(inputs.axisX, minTimeBetweenTicks);
 
             Structs.InputMessage inputMsg;
             inputMsg.tick_number = clientTick;

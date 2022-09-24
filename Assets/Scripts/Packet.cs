@@ -105,6 +105,7 @@ public class Packet
         InsertBool(inputs.left);
         InsertBool(inputs.right);
         InsertBool(inputs.jump);
+        InsertFloat(inputs.axisX);
 
     }
 
@@ -116,6 +117,7 @@ public class Packet
         inputs.left = PopBool();
         inputs.right = PopBool();
         inputs.jump = PopBool();
+        inputs.axisX = PopFloat();
 
         return inputs;
 

@@ -68,9 +68,9 @@ public class Player : MonoBehaviour
     }
 
 
-    public void UpdateCamera(float deltaTime)
+    public void UpdateCamera(float axisX, float deltaTime)
     {
-        float mouseX = Input.GetAxisRaw("Mouse X") * mouseSens * deltaTime;
+        float mouseX = axisX * mouseSens * deltaTime;
         float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSens * deltaTime;
 
         // Camera rotation
@@ -82,6 +82,12 @@ public class Player : MonoBehaviour
         // Update camera
         Camera.main.transform.position = playerCameraPosition.transform.position;
         Camera.main.transform.rotation = playerCameraPosition.transform.rotation;
+    }
+
+    public void RotatePlayer(float axisX, float deltaTime)
+    {
+        float mouseX = axisX * mouseSens * deltaTime;
+        transform.Rotate(Vector3.up * mouseX);
     }
 
     public void ProcessJump(Structs.Inputs input)

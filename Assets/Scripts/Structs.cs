@@ -12,6 +12,7 @@ public class Structs
         public bool left;
         public bool right;
         public bool jump;
+        public float axisX;
     }
 
     public struct InputMessage

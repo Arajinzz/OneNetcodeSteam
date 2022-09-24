@@ -109,6 +109,7 @@ public class Server : MonoBehaviour
                 GameObject whatPlayer = gameManager.playerList[recPacket.Value.SteamId];
                 whatPlayer.GetComponent<Player>().ProcessMouvement(inputMsg.inputs, minTimeBetweenTicks);
                 whatPlayer.GetComponent<Player>().ProcessJump(inputMsg.inputs);
+                whatPlayer.GetComponent<Player>().RotatePlayer(inputMsg.inputs.axisX, minTimeBetweenTicks);
 
                 Structs.StateMessage stateMsg;
                 stateMsg.tick_number = inputMsg.tick_number + 1;
