@@ -43,7 +43,10 @@ public class GameManager : MonoBehaviour
     public void AddPlayerToList(SteamId id, GameObject player)
     {
         if (!playerList.ContainsKey(id))
+        {
             playerList.Add(id, player);
+            player.GetComponent<Player>().playerId = id;
+        }
 
         Debug.Log("Adding player with id: " + id);
     }

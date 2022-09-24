@@ -35,6 +35,9 @@ public class Player : MonoBehaviour
     // Camera rotation
     private float xRotation = 2f;
 
+    [SerializeField]
+    public ulong playerId;
+
     void Start()
     {
         Controller = GetComponent<CharacterController>();
@@ -77,7 +80,7 @@ public class Player : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -15f, 15f);
         playerCameraPosition.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
+        //transform.Rotate(Vector3.up * mouseX);
 
         // Update camera
         Camera.main.transform.position = playerCameraPosition.transform.position;

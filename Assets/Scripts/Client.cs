@@ -131,16 +131,19 @@ public class Client : MonoBehaviour
                 if (playerId == SteamManager.Instance.PlayerSteamId)
                 {
                     localPlayer = playerObj.GetComponent<Player>();
+                    gameManager.AddPlayerToList(playerId, localPlayer.gameObject);
+                } else
+                {
+                    gameManager.AddPlayerToList(playerId, playerObj.gameObject);
                 }
-                gameManager.AddPlayerToList(playerId, playerObj);
             } else if (packet.GetPacketType() == Packet.PacketType.StateMessage)
             {
                 SteamId playerId = packet.PopUInt64();
                 Structs.StateMessage stateMsg = packet.PopStateMessage();
                 if (gameManager.playerList.ContainsKey(playerId))
                 {
-                    gameManager.playerList[playerId].transform.position = stateMsg.position;
-                    gameManager.playerList[playerId].transform.rotation = stateMsg.rotation;
+                    gameManager.playerList[playerId].transform.position = new Vector3(stateMsg.position.x, stateMsg.position.y, stateMsg.position.z);
+                    gameManager.playerList[playerId].transform.rotation = new Quaternion(stateMsg.rotation.x, stateMsg.rotation.y, stateMsg.rotation.z, stateMsg.rotation.w);
                 }
             } else if (packet.GetPacketType() == Packet.PacketType.PlayerLeaving)
             {

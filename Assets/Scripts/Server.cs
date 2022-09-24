@@ -113,8 +113,8 @@ public class Server : MonoBehaviour
 
                 Structs.StateMessage stateMsg;
                 stateMsg.tick_number = inputMsg.tick_number + 1;
-                stateMsg.position = whatPlayer.GetComponent<Player>().transform.position;
-                stateMsg.rotation = whatPlayer.GetComponent<Player>().transform.rotation;
+                stateMsg.position = whatPlayer.transform.position;
+                stateMsg.rotation = whatPlayer.transform.rotation;
 
                 var statePacket = new Packet(Packet.PacketType.StateMessage);
                 statePacket.InsertUInt64(recPacket.Value.SteamId);
