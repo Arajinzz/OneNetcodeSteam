@@ -182,6 +182,12 @@ public class SteamLobbyManager : MonoBehaviour
         // All users in lobby will execute this
         SteamManager.Instance.CloseP2P(member.Id);
         Debug.Log("The owner is : " + CurrentLobby.Owner.Id);
+
+        GameObject manager = GameObject.Find("GameManager");
+        if (manager)
+        {
+            manager.GetComponent<GameManager>().RemovePlayerFromList(member.Id);
+        }
     }
 
     // Executed when a member joins the lobby

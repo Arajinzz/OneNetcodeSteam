@@ -125,15 +125,6 @@ public class Server : MonoBehaviour
                 packetToSend.Data = statePacket.buffer.ToArray();
 
                 SendToAllLobby(packetToSend);
-            } else if (packet.GetPacketType() == Packet.PacketType.PlayerLeaving)
-            {
-                packet.InsertUInt64(recPacket.Value.SteamId);
-
-                P2Packet packetToSend;
-                packetToSend.SteamId = recPacket.Value.SteamId;
-                packetToSend.Data = packet.buffer.ToArray();
-
-                SendToAllLobby(packetToSend);
             }
 
         }

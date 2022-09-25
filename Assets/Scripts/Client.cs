@@ -79,7 +79,6 @@ public class Client : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            SendToServer(new Packet(Packet.PacketType.PlayerLeaving).buffer.ToArray());
             SteamLobbyManager.Instance.LeaveLobby();
         }
 
@@ -144,13 +143,6 @@ public class Client : MonoBehaviour
                 {
                     gameManager.playerList[playerId].transform.position = new Vector3(stateMsg.position.x, stateMsg.position.y, stateMsg.position.z);
                     gameManager.playerList[playerId].transform.rotation = new Quaternion(stateMsg.rotation.x, stateMsg.rotation.y, stateMsg.rotation.z, stateMsg.rotation.w);
-                }
-            } else if (packet.GetPacketType() == Packet.PacketType.PlayerLeaving)
-            {
-                SteamId playerId = packet.PopUInt64();
-                if (gameManager.playerList.ContainsKey(playerId))
-                {
-                    gameManager.RemovePlayerFromList(playerId);
                 }
             }
         
