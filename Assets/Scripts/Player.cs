@@ -61,7 +61,9 @@ public class Player : MonoBehaviour
 
         // Falling
         Velocity.y += Gravity * Time.fixedDeltaTime;
-        Controller.Move(Velocity * Time.fixedDeltaTime);
+
+        Physics.SyncTransforms();
+        Controller.Move(Velocity * Time.fixedDeltaTime); // To prevent character controller from overriding transfrom on correction
     }
 
 
@@ -127,6 +129,8 @@ public class Player : MonoBehaviour
         }
 
         Vector3 move = transform.right * x + transform.forward * z;
+
+        Physics.SyncTransforms(); // To prevent character controller from overriding transfrom on correction
         Controller.Move(move * Speed * deltaTime);
     }
 }

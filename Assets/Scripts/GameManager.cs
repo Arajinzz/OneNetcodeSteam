@@ -54,7 +54,11 @@ public class GameManager : MonoBehaviour
     public void RemovePlayerFromList(SteamId id)
     {
         if (playerList.ContainsKey(id))
+        {
+            Destroy(playerList[id]);
             playerList.Remove(id);
+        }
+            
     }
 
 }
